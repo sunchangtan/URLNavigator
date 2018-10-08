@@ -1,11 +1,9 @@
 # URLNavigator
 
-![Swift](https://img.shields.io/badge/Swift-4.1-orange.svg)
+![Swift](https://img.shields.io/badge/Swift-4.2-orange.svg)
 [![CocoaPods](http://img.shields.io/cocoapods/v/URLNavigator.svg)](https://cocoapods.org/pods/URLNavigator)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/devxoul/URLNavigator.svg?branch=master)](https://travis-ci.org/devxoul/URLNavigator)
 [![CodeCov](https://img.shields.io/codecov/c/github/devxoul/URLNavigator.svg)](https://codecov.io/gh/devxoul/URLNavigator)
-[![CocoaDocs](https://img.shields.io/cocoapods/metrics/doc-percent/URLNavigator.svg)](http://cocoadocs.org/docsets/URLNavigator/)
 
 ⛵️ URLNavigator provides an elegant way to navigate through view controllers by URLs. URL patterns can be mapped by using `URLNavigator.register(_:_:)` function.
 
@@ -76,17 +74,13 @@ Navigator.open("myapp://alert?title=Hello&message=World")
 
 ## Installation
 
-- **For iOS 8+ projects** with [CocoaPods](https://cocoapods.org):
+URLNavigator officially supports CocoaPods only.
 
-    ```ruby
-    pod 'URLNavigator'
-    ```
+**Podfile**
 
-- **For iOS 8+ projects** with [Carthage](https://github.com/Carthage/Carthage):
-
-    ```
-    github "devxoul/URLNavigator"
-    ```
+```ruby
+pod 'URLNavigator'
+```
 
 
 ## Example
@@ -216,17 +210,18 @@ Navigator.open("myapp://alert?title=Hi", context: context)
 ```
 
 
-#### Setting custom validators for placeholders
-Custom validators can be defined for placeholders.
+#### Defining custom URL Value Converters
 
-For example, the placeholder `<department>` should only contain the strings `['men','women','kids']`. If it doesn't contain any of these, the URL pattern should not match.
+You can define custom URL Value Converters for URL placeholders.
 
-Add the custom value converter to the `[String: URLValueConverter]` dictionary on your instance of `Navigator`.
+For example, the placeholder `<region>` is only allowed for the strings `["us-west-1", "ap-northeast-2", "eu-west-3"]`. If it doesn't contain any of these, the URL pattern should not match.
+
+Add a custom value converter to the `[String: URLValueConverter]` dictionary on your instance of `Navigator`.
 
 ```swift
-navigator.matcher.valueConverters["dept-type"] = { pathComponents, index in
-  let departments = ["men", "women", "kids"]
-  if departments.contains(pathComponents[index]) {
+navigator.matcher.valueConverters["region"] = { pathComponents, index in
+  let allowedRegions = ["us-west-1", "ap-northeast-2", "eu-west-3"]
+  if allowedRegions.contains(pathComponents[index]) {
     return pathComponents[index]
   } else {
     return nil
@@ -234,17 +229,15 @@ navigator.matcher.valueConverters["dept-type"] = { pathComponents, index in
 }
 ```
 
-You will then be able to add the validator to a placeholder in the same way that standard validators are included.
-
-For example, `myapp://user/browse/<department:dept-type>` matches with:
-- `myapp://user/browse/men`
-- `myapp://user/browse/women`
-- `myapp://user/browse/kids`
+With the code above, for example, `myapp://region/<region:_>` matches with:
+- `myapp://region/us-west-1`
+- `myapp://region/ap-northeast-2`
+- `myapp://region/eu-west-3`
 
 But it doesn't match with:
-- `myapp://user/browse/babies`
+- `myapp://region/ca-central-1`
 
-For additional information, see the [implementation](https://github.com/devxoul/URLNavigator/blob/master/Sources/URLMatcher/URLMatcher.swift) of default validators.
+For additional information, see the [implementation](https://github.com/devxoul/URLNavigator/blob/master/Sources/URLMatcher/URLMatcher.swift) of default URL Value Converters.
 
 
 ## License
